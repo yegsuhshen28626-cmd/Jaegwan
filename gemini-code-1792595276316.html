@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxy One UI Fan Archive 🌌</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #08090b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        /* 스마트폰 외형 프레임 */
+        .phone-container {
+            width: 375px;
+            height: 780px;
+            background: #000;
+            border-radius: 44px;
+            border: 9px solid #282a2e;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 0 2px #3e424a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 펀치홀 카메라 */
+        .punch-hole {
+            width: 13px;
+            height: 13px;
+            background: #000;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+            z-index: 1000;
+        }
+
+        /* 상단 상태바 */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 36px;
+            padding: 8px 22px 0 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 900;
+            color: #fff;
+        }
+
+        /* 배경화면 */
+        .screen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(30, 20, 50, 0.5) 0%, rgba(10, 10, 20, 0.7) 100%),
+                        url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+        }
+
+        /* 화면 영역 */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.3s ease;
+        }
+
+        /* 잠금 화면 시계 */
+        .galaxy-lock-clock {
+            text-align: center;
+            margin-top: 65px;
+        }
+        .galaxy-lock-clock .time {
+            font-size: 76px;
+            font-weight: 200;
+            line-height: 1;
+            letter-spacing: -2px;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .galaxy-lock-clock .date {
+            font-size: 15px;
+            margin-top: 6px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        /* 삼성 순정 아이콘 */
+        .samsung-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            transition: transform 0.12s ease;
+        }
+
+        .samsung-icon:active {
+            transform: scale(0.90);
+        }
+
+        /* 폴더 스타일 */
+        .mini-folder {
+            width: 58px;
+            height: 58px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 8px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            align-items: center;
+            justify-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .mini-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: white;
+        }
+
+        /* 앱 레이블 */
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .app-label {
+            font-size: 11px;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            font-weight: 400;
+        }
+
+        /* 독 바 */
+        .dock-bar {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 32px;
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 5px;
+        }
+
+        /* 검색바 */
+        .samsung-search-bar {
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* 푸시 알림 배너 */
+        .push-notification {
+            position: absolute;
+            top: -100px;
+            left: 12px;
+            right: 12px;
+            background: rgba(30, 32, 38, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: top 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+            cursor: pointer;
+        }
+        .push-notification.show {
+            top: 45px;
+        }
+
+        /* 수신 전화 화면 */
+        .call-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1c2331 0%, #0d1117 100%);
+            z-index: 4000;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 70px 30px 60px 30px;
+        }
+
+        /* 수락 버튼 애니메이션 */
+        .accept-btn-ring {
+            position: relative;
+        }
+        .accept-btn-ring::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.3);
+            animation: pulse-green 1.5s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        /* 모달 창 */
+        .app-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121316;
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            animation: slideUp 0.25s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* 하단 제스처 바 */
+        .nav-gesture-bar {
+            width: 110px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6000;
+            cursor: pointer;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        
+        <!-- 펀치홀 카메라 -->
+        <div class="punch-hole"></div>
+
+        <!-- 상단 상태바 -->
+        <div class="status-bar">
+            <span id="status-time">10:24</span>
+            <div class="flex items-center gap-1.5 text-xs">
+                <i class="fa-solid fa-wifi text-[10px]"></i>
+                <span class="text-[10px] font-bold">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-[11px]"></i>
+            </div>
+        </div>
+
+        <!-- 배경화면 -->
+        <div class="screen-bg" id="wallpaper"></div>
+
+        <!-- 1. 잠금 화면 -->
+        <div class="screen z-20 flex flex-col justify-between p-6 cursor-pointer" id="lock-screen" onclick="unlockPhone()">
+            <div>
+                <div class="galaxy-lock-clock">
+                    <div class="time" id="lock-time">10:24</div>
+                    <div class="date" id="lock-date">10월 21일 (수)</div>
+                </div>
+
+                <!-- 잠금화면 알림 카드 -->
+                <div class="mt-8 bg-white/15 backdrop-blur-md rounded-2xl p-3.5 border border-white/20 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm">
+                        <i class="fa-solid fa-comment"></i>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold">메시지</span>
+                            <span class="text-[10px] text-white/60">방금 전</span>
+                        </div>
+                        <p class="text-xs text-white/90 truncate" id="lock-msg-preview">최애 ♥: 오늘 하루도 파이팅이야! 💖</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pb-6">
+                <p class="text-xs text-white/70 animate-pulse font-light">
+                    <i class="fa-solid fa-chevron-up text-[10px] mr-1"></i> 화면을 쓸어올리거나 터치하여 잠금해제
+                </p>
+            </div>
+        </div>
+
+        <!-- 2. 홈 화면 -->
+        <div class="screen z-10 flex flex-col justify-between pt-12 px-4 pb-3" id="home-screen" style="display: none;">
+            
+            <div class="flex flex-col gap-4">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-xs font-semibold text-white/80">Galaxy One UI</span>
+                    <button onclick="triggerCall(event)" class="bg-white/20 hover:bg-white/30 text-[10px] px-2.5 py-1 rounded-full border border-white/20 transition backdrop-blur-sm">
+                        <i class="fa-solid fa-phone-volume mr-1 text-green-400"></i>최애 전화 수신 테스트
+                    </button>
+                </div>
+
+                <!-- 홈 위젯 -->
+                <div class="bg-white/15 backdrop-blur-md rounded-3xl p-4 border border-white/20">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-sun text-yellow-300 text-lg"></i>
+                            <span class="text-xs font-medium">서울 • 21°C</span>
+                        </div>
+                        <span class="text-[10px] bg-green-500/30 text-green-300 px-2 py-0.5 rounded-full border border-green-400/30">Melon Live</span>
+                    </div>
+                    <div class="flex items-center gap-3 mt-3 pt-2 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600/60 flex items-center justify-center text-white shadow-md">
+                            <i class="fa-solid fa-music"></i>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <p class="text-xs font-semibold truncate">최애의 신곡 - Universe ✨</p>
+                            <p class="text-[10px] text-white/60">지금 재생 중 • 02:45</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 앱 그리드 -->
+                <div class="grid grid-cols-4 gap-y-4 gap-x-3 px-1 mt-1">
+                    
+                    <div class="app-item">
+                        <div class="mini-folder">
+                            <div class="mini-icon bg-blue-500"><i class="fa-solid fa-globe"></i></div>
+                            <div class="mini-icon bg-red-500"><i class="fa-solid fa-note-sticky"></i></div>
+                            <div class="mini-icon bg-green-500"><i class="fa-solid fa-calculator"></i></div>
+                            <div class="mini-icon bg-purple-500"><i class="fa-solid fa-folder"></i></div>
+                            <div class="mini-icon bg-amber-500"><i class="fa-solid fa-clock"></i></div>
+                            <div class="mini-icon bg-teal-500"><i class="fa-solid fa-compass"></i></div>
+                        </div>
+                        <span class="app-label">Samsung</span>
+                    </div>
+
+                    <div class="app-item">
+                        <div class="mini-folder">
+                            <div class="mini-icon bg-red-500"><i class="fa-brands fa-youtube"></i></div>
+                            <div class="mini-icon bg-blue-400"><i class="fa-solid fa-map"></i></div>
+                            <div class="mini-icon bg-yellow-500"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="mini-icon bg-green-600"><i class="fa-brands fa-google-drive"></i></div>
+                            <div class="mini-icon bg-blue-600"><i class="fa-solid fa-photo-film"></i></div>
+                            <div class="mini-icon bg-red-400"><i class="fa-solid fa-cloud"></i></div>
+                        </div>
+                        <span class="app-label">Google</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('phone')">
+                        <div class="samsung-icon bg-gradient-to-tr from-green-600 to-green-400 text-white text-2xl">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <span class="app-label">전화</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('contacts')">
+                        <div class="samsung-icon bg-gradient-to-tr from-orange-600 to-red-400 text-white text-2xl">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <span class="app-label">연락처</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('messages')">
+                        <div class="samsung-icon bg-gradient-to-tr from-blue-600 to-cyan-400 text-white text-2xl relative">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-black font-bold" id="msg-badge" style="display:none;">1</span>
+                        </div>
+                        <span class="app-label">메시지</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('gallery')">
+                        <div class="samsung-icon bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-300 text-white text-2xl">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <span class="app-label">갤러리</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('camera')">
+                        <div class="samsung-icon bg-gradient-to-tr from-gray-300 to-gray-100 text-gray-800 text-2xl">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                        <span class="app-label">카메라</span>
+                    </div>
+
+                    <div class="app-item" onclick="openApp('notes')">
+                        <div class="samsung-icon bg-gradient-to-tr from-amber-600 to-orange-400 text-white text-2xl">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <span class="app-label">노트</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div>
+                <div class="samsung-search-bar">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-white/70 text-sm"></i>
+                        <span class="text-white/70 text-xs">검색</span>
+                    </div>
+                    <i class="fa-solid fa-microphone text-white/80 text-sm"></i>
+                </div>
+
+                <div class="dock-bar">
+                    <div class="app-item" onclick="openApp('phone')">
+                        <div class="samsung-icon bg-gradient-to-tr from-green-600 to-green-400 text-white text-xl !w-12 !h-12 !rounded-2xl">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                    </div>
+                    <div class="app-item" onclick="openApp('messages')">
+                        <div class="samsung-icon bg-gradient-to-tr from-blue-600 to-cyan-400 text-white text-xl !w-12 !h-12 !rounded-2xl">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                    </div>
+                    <div class="app-item" onclick="openApp('gallery')">
+                        <div class="samsung-icon bg-gradient-to-tr from-pink-500 to-amber-300 text-white text-xl !w-12 !h-12 !rounded-2xl">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                    </div>
+                    <div class="app-item" onclick="openApp('notes')">
+                        <div class="samsung-icon bg-gradient-to-tr from-amber-600 to-orange-400 text-white text-xl !w-12 !h-12 !rounded-2xl">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. 수신 전화 화면 (1번 사진 고정 적용) -->
+        <div class="call-screen" id="call-screen">
+            <div class="text-center mt-6">
+                <span class="text-xs text-green-400 bg-green-500/20 px-3 py-1 rounded-full border border-green-500/30" id="call-tag">수신 전화</span>
+                <h2 class="text-3xl font-bold mt-4" id="call-caller-name">최애 ♥</h2>
+                <p class="text-xs text-white/60 mt-1" id="call-sub-text">010-1004-2026</p>
+            </div>
+
+            <!-- 전화 프로필: 1번 이미지(call.jpg) 고정 -->
+            <div class="flex justify-center my-auto">
+                <div class="w-36 h-36 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-1 shadow-2xl">
+                    <img src="call.jpg" class="w-full h-full object-cover rounded-full" alt="최애 프로필">
+                </div>
+            </div>
+
+            <!-- 거절 & 수락 버튼 -->
+            <div class="flex justify-around items-center px-4" id="call-button-group">
+                <div class="flex flex-col items-center gap-2">
+                    <button onclick="declineCall(event)" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl shadow-xl active:scale-95 transition cursor-pointer">
+                        <i class="fa-solid fa-phone-slash"></i>
+                    </button>
+                    <span class="text-xs text-white/80 font-medium">거절</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                    <div class="accept-btn-ring">
+                        <button onclick="acceptCall(event)" class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl shadow-xl active:scale-95 transition cursor-pointer">
+                            <i class="fa-solid fa-phone"></i>
+                        </button>
+                    </div>
+                    <span class="text-xs text-white/80 font-medium">수락</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 알림 푸시 배너 -->
+        <div class="push-notification" id="push-banner" onclick="openApp('messages')">
+            <div class="w-10 h-10 rounded-2xl bg-blue-500 flex items-center justify-center text-white text-lg">
+                <i class="fa-solid fa-comment"></i>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-white" id="push-sender">메시지</span>
+                    <span class="text-[10px] text-white/50">방금 전</span>
+                </div>
+                <p class="text-xs text-red-300 font-medium truncate mt-0.5" id="push-msg-text">내용</p>
+            </div>
+        </div>
+
+        <!-- 4. 앱 모달 -->
+        <div class="app-modal" id="app-modal">
+            <div class="p-4 pt-10 border-b border-white/10 flex justify-between items-center bg-zinc-900">
+                <span class="text-base font-bold flex items-center gap-2" id="modal-title">앱</span>
+                <button onclick="closeApp()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-full border border-white/10">
+                    닫기 ✕
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 custom-scroll" id="modal-body"></div>
+        </div>
+
+        <!-- 하단 네비게이션 제스처 바 -->
+        <div class="nav-gesture-bar" onclick="goHome()"></div>
+
+    </div>
+
+    <!-- 스크립트 -->
+    <script>
+        let isLocked = true;
+
+        let messagesList = [
+            { sender: '최애 ♥', text: '오늘 하루도 파이팅이야! 💖', time: '방금 전', unread: false },
+            { sender: '덕메 친구 1', text: '주말 팝업스토어 티켓팅 성공했어?!', time: '10분 전', unread: false }
+        ];
+
+        const contactsList = [
+            { id: 'idol', name: '최애 ♥', phone: '010-1004-2026', tag: '최애', color: 'bg-pink-500', isFavorite: true },
+            { id: 'friend1', name: '덕메 친구 1', phone: '010-5555-7777', tag: '친구', color: 'bg-blue-500', isFavorite: false },
+            { id: 'memberB', name: '최애 멤버 B', phone: '010-7777-8888', tag: '멤버', color: 'bg-purple-500', isFavorite: false },
+            { id: 'fanclub', name: '팬클럽 단톡방지기', phone: '010-1234-5678', tag: '모임', color: 'bg-emerald-500', isFavorite: false },
+            { id: 'club', name: '동네 덕질 동아리', phone: '010-9999-0000', tag: '모임', color: 'bg-amber-500', isFavorite: false }
+        ];
+
+        const randomIncomingMessages = [
+            { sender: '최애 ♥', text: '퇴근/하교하고 맛있는 거 꼭 챙겨먹어! 🍴' },
+            { sender: '최애 ♥', text: '주말 무대 준비 중인데 너무 설렌다 ✨' },
+            { sender: '덕메 친구 1', text: '대박 방금 인스타 올려준 사진 봤어?? 😭' },
+            { sender: '덕메 친구 1', text: '주말 팝업스토어 몇 시까지 갈까?' },
+            { sender: '최애 멤버 B', text: '오늘 응원하러 와줘서 너무 고마웠어!' },
+            { sender: '팬클럽 단톡방지기', text: '다음 주 합정역 전광판 광고 시안 최종 확인해 주세요!' },
+            { sender: '동네 덕질 동아리', text: '이번 주 단체 정모 신청 마감 1시간 전입니다!' }
+        ];
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeStr = `${hours}:${minutes}`;
+
+            document.getElementById('status-time').innerText = timeStr;
+            document.getElementById('lock-time').innerText = timeStr;
+
+            const months = now.getMonth() + 1;
+            const dates = now.getDate();
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            document.getElementById('lock-date').innerText = `${months}월 ${dates}일 (${days[now.getDay()]})`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function unlockPhone() {
+            if (!isLocked) return;
+            isLocked = false;
+            document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('home-screen').style.display = 'flex';
+            }, 300);
+        }
+
+        function goHome() {
+            closeApp();
+        }
+
+        setTimeout(() => {
+            triggerCall();
+        }, 3000);
+
+        setInterval(() => {
+            const randMsg = randomIncomingMessages[Math.floor(Math.random() * randomIncomingMessages.length)];
+            receiveNewMessage(randMsg.sender, randMsg.text);
+        }, 12000);
+
+        function triggerCall(e) {
+            if (e) e.stopPropagation();
+            if (isLocked) unlockPhone();
+            
+            document.getElementById('call-tag').innerText = '수신 전화';
+            document.getElementById('call-tag').className = 'text-xs text-green-400 bg-green-500/20 px-3 py-1 rounded-full border border-green-500/30';
+            document.getElementById('call-sub-text').innerText = '010-1004-2026';
+            document.getElementById('call-button-group').style.display = 'flex';
+            
+            document.getElementById('call-screen').style.display = 'flex';
+        }
+
+        function tryCallContact(contactId, e) {
+            if (e) e.stopPropagation();
+
+            if (contactId === 'idol') {
+                triggerCall();
+            } else {
+                showNotification('안내', '최애 전용 단독 통화 라인입니다 💖');
+            }
+        }
+
+        function acceptCall(e) {
+            if (e) e.stopPropagation();
+
+            document.getElementById('call-tag').innerText = '통화 연결 중...';
+            document.getElementById('call-sub-text').innerText = '00:01';
+            document.getElementById('call-button-group').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('call-screen').style.display = 'none';
+                receiveNewMessage('최애 ♥', '전화 받아줘서 고마워! 💖 나중에 또 연락할게!');
+            }, 3000);
+        }
+
+        function declineCall(e) {
+            if (e) e.stopPropagation();
+            
+            document.getElementById('call-screen').style.display = 'none';
+
+            setTimeout(() => {
+                receiveNewMessage('최애 ♥', '어? 전화 피하는 거야? 🥺 무슨 일 있어? 전화 받아!');
+            }, 500);
+        }
+
+        function receiveNewMessage(sender, text) {
+            messagesList.unshift({ sender, text, time: '방금 전', unread: true });
+            
+            document.getElementById('msg-badge').style.display = 'flex';
+            document.getElementById('msg-badge').innerText = messagesList.filter(m => m.unread).length;
+
+            showNotification(`메시지 • ${sender}`, text);
+        }
+
+        function showNotification(title, text) {
+            document.getElementById('push-sender').innerText = title;
+            document.getElementById('push-msg-text').innerText = text;
+
+            const banner = document.getElementById('push-banner');
+            banner.classList.add('show');
+
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 4000);
+        }
+
+        function openApp(appName) {
+            const modal = document.getElementById('app-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            if (appName === 'messages') {
+                messagesList.forEach(m => m.unread = false);
+                document.getElementById('msg-badge').style.display = 'none';
+
+                title.innerHTML = `<i class="fa-solid fa-comment-dots text-blue-400"></i> 메시지`;
+                
+                let html = `<div class="space-y-3">`;
+                messagesList.forEach(m => {
+                    html += `
+                        <div class="bg-zinc-800/90 p-3.5 rounded-2xl border border-white/10">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-sm text-yellow-300">${m.sender}</span>
+                                <span class="text-[10px] text-white/50">${m.time}</span>
+                            </div>
+                            <p class="text-xs text-white/90">${m.text}</p>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                body.innerHTML = html;
+
+            } else if (appName === 'phone' || appName === 'contacts') {
+                title.innerHTML = `<i class="fa-solid fa-user text-orange-400"></i> 연락처 (${contactsList.length})`;
+                
+                let html = `<div class="space-y-2.5">`;
+                contactsList.forEach(c => {
+                    html += `
+                        <div class="flex items-center justify-between p-3 bg-zinc-800/80 rounded-2xl border border-white/5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full ${c.color} flex items-center justify-center font-bold text-sm text-white shadow-md">
+                                    ${c.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white">${c.name} <span class="text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-white/60 ml-1">${c.tag}</span></p>
+                                    <p class="text-[10px] text-white/50 font-mono mt-0.5">${c.phone}</p>
+                                </div>
+                            </div>
+                            <button onclick="tryCallContact('${c.id}', event)" class="${c.isFavorite ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'} border text-xs px-3 py-1.5 rounded-full transition">전화</button>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                body.innerHTML = html;
+
+            /* 갤러리 앱: 2번(photo1.jpg), 3번(photo2.jpg)만 노출되도록 설정 */
+            } else if (appName === 'gallery') {
+                title.innerHTML = `<i class="fa-solid fa-seedling text-pink-400"></i> 갤러리`;
+                body.innerHTML = `
+                    <p class="text-xs text-white/60 mb-3">사진 (2)</p>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <img src="photo1.jpg" class="rounded-xl w-full h-40 object-cover border border-white/10" alt="고양이 사진">
+                        <img src="photo2.jpg" class="rounded-xl w-full h-40 object-cover border border-white/10" alt="비빔밥 사진">
+                    </div>
+                `;
+            } else if (appName === 'notes') {
+                title.innerHTML = `<i class="fa-solid fa-book-open text-amber-400"></i> 삼성 노트`;
+                body.innerHTML = `
+                    <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 mb-3">
+                        <h3 class="font-bold text-sm text-amber-300">📝 입덕일기 & 활동 기록</h3>
+                        <p class="text-[11px] text-white/50 mt-1">2026.10.21 작성</p>
+                    </div>
+                    <div class="text-xs text-white/80 space-y-2 leading-relaxed">
+                        <p>✨ 입덕 계기: 무대 직캠 보고 음색에 반함!</p>
+                        <p>✨ 매일매일 응원하고 팬페이지에 기록하기.</p>
+                    </div>
+                `;
+            } else {
+                title.innerHTML = `<i class="fa-solid fa-folder text-purple-400"></i> 앱 알림`;
+                body.innerHTML = `<div class="text-center text-xs text-white/60 py-10">준비 중인 서비스입니다.</div>`;
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeApp() {
+            document.getElementById('app-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
